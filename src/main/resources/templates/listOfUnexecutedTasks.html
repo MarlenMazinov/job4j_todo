@@ -49,10 +49,10 @@
             </thead>
             <tbody>
             <tr th:each="task: ${unexTasks}">
-                <td><a class="nav-item nav-link" th:href="@{|/taskDescription/${task.name}|}"><span
+                <td><a class="nav-item nav-link" th:href="@{|/taskDescription/${task.id}|}"><span
                         th:text="${task.name}"></span></a>
                 </td>
-                <td th:text="${task.created}"></td>
+                <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
                 <td>Невыполнено</td>
             </tr>
             </tbody>

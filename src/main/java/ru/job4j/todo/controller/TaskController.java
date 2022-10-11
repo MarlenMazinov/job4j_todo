@@ -9,8 +9,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 
 @Controller
@@ -56,25 +55,28 @@ public class TaskController {
         return "addTask";
     }
 
-    @GetMapping("/taskDescription/{taskName}")
-    public String taskDescr(Model model, @PathVariable("taskName") String name,
+    @GetMapping("/taskDescription/{taskId}")
+    public String taskDescr(Model model, @PathVariable("taskId") int id,
                             HttpSession session) {
         if (checkUser(model, session) != null) {
             return checkUser(model, session);
         }
-        if (service.findByName(name).isPresent()) {
-            model.addAttribute("task", service.findByName(name).get());
+        if (service.findById(id).isPresent()) {
+            model.addAttribute("task", service.findById(id).get());
         }
         return "taskDescription";
     }
 
-    @GetMapping("/editTaskForm/{taskName}")
-    public String editTask(Model model, @PathVariable("taskName") String name,
+    @GetMapping("/editTaskForm/{taskId}")
+    public String editTask(Model model, @PathVariable("taskId") int id,
                            HttpSession session) {
         if (checkUser(model, session) != null) {
             return checkUser(model, session);
         }
-        Task task = getTaskFrBd(name);
+        Task task = new Task();
+        if (service.findById(id).isPresent()) {
+            task = service.findById(id).get();
+        }
         model.addAttribute("task", task);
         return "updateTaskForm";
     }
@@ -84,22 +86,19 @@ public class TaskController {
         if (checkUser(model, session) != null) {
             return checkUser(model, session);
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        task.setCreated(dateFormat.format(Calendar.getInstance().getTime()));
+        task.setCreated(LocalDateTime.now());
         service.create(task);
         return "redirect:/index";
     }
 
-    @PostMapping("/editTaskCondition/{taskName}")
-    public String editCondition(Model model, @PathVariable("taskName") String name,
+    @PostMapping("/editTaskCondition/{taskId}")
+    public String editCondition(Model model, @PathVariable("taskId") int id,
                                 HttpSession session) {
         if (checkUser(model, session) != null) {
             return checkUser(model, session);
         }
-        Task task = getTaskFrBd(name);
-        task.setDone(true);
-        service.update(task);
-        return taskDescr(model, name, session);
+        service.updateTaskState(id);
+        return taskDescr(model, id, session);
     }
 
     @PostMapping("/updateTask")
@@ -108,32 +107,17 @@ public class TaskController {
             return checkUser(model, session);
         }
         service.update(task);
-        return taskDescr(model, task.getName(), session);
+        return taskDescr(model, task.getId(), session);
     }
 
-    @PostMapping("/deleteTask/{taskName}")
-    public String deleteTask(Model model, @PathVariable("taskName") String name,
+    @PostMapping("/deleteTask/{taskId}")
+    public String deleteTask(Model model, @PathVariable("taskId") int id,
                              HttpSession session) {
         if (checkUser(model, session) != null) {
             return checkUser(model, session);
         }
-        Task task = getTaskFrBd(name);
-        service.delete(task);
+        service.delete(id);
         return "redirect:/index";
-    }
-
-    private <T> Task getTaskFrBd(T param) {
-        Task result = new Task();
-        if (param.getClass().equals(String.class)) {
-            if (service.findByName((String) param).isPresent()) {
-                result = service.findByName((String) param).get();
-            }
-        } else {
-            if (service.findById((Integer) param).isPresent()) {
-                result = service.findById((Integer) param).get();
-            }
-        }
-        return result;
     }
 
     private String checkUser(Model model, HttpSession session) {

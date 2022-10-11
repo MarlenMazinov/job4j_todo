@@ -16,7 +16,7 @@ import java.util.Optional;
 public class TaskStore {
     private final SessionFactory sf;
 
-    public Task create(Task task) {
+    public void create(Task task) {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
@@ -26,9 +26,6 @@ public class TaskStore {
             session.getTransaction().rollback();
         }
         session.close();
-        Optional<Task> fuser = findByName(task.getName());
-        fuser.ifPresent(value -> task.setId(value.getId()));
-        return task;
     }
 
     public boolean update(Task task) {
@@ -46,11 +43,33 @@ public class TaskStore {
         return result;
     }
 
-    public void delete(Task task) {
+    public boolean updateTaskState(int id) {
+        Session session = sf.openSession();
+        boolean result = false;
+        try {
+            session.beginTransaction();
+            session.createQuery(
+                            "UPDATE Task SET done = :fdone WHERE id = :fId")
+                    .setParameter("fdone", true)
+                    .setParameter("fId", id)
+                    .executeUpdate();
+            session.getTransaction().commit();
+            result = true;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        }
+        session.close();
+        return result;
+    }
+
+    public void delete(int id) {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
-            session.delete(task);
+            session.createQuery(
+                            "DELETE Task WHERE id = :fId")
+                    .setParameter("fId", id)
+                    .executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();

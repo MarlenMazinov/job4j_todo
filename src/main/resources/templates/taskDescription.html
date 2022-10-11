@@ -52,19 +52,19 @@
             <tr>
                 <td th:text="${task.name}"></td>
                 <td th:text="${task.description}"></td>
-                <td th:text="${task.created}"></td>
+                <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
                 <td th:text="${task.done} ? 'Выполнено' : 'Невыполнено'"/>
             </tr>
             </tbody>
         </table>
     </div>
-    <form id = "editCondition" th:action = "@{|/editTaskCondition/${task.name}|}"  method="post">
+    <form id = "editCondition" th:action = "@{|/editTaskCondition/${task.id}|}"  method="post">
         <button type="submit" class="btn btn-primary mt-3">Выполнено</button>
     </form>
-    <form id = "editTask" th:action = "@{|/editTaskForm/${task.name}|}"  method="get">
+    <form id = "editTask" th:action = "@{|/editTaskForm/${task.id}|}"  method="get">
         <button type="submit" class="btn btn-primary mt-3">Отредактировать</button>
     </form>
-    <form id = "deleteTask" th:action = "@{|/deleteTask/${task.name}|}"  method="post">
+    <form id = "deleteTask" th:action = "@{|/deleteTask/${task.id}|}"  method="post">
         <button type="submit" class="btn btn-primary mt-3">Удалить</button>
     </form>
 </div>

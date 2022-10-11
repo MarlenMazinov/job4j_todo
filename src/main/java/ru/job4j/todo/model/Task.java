@@ -3,6 +3,7 @@ package ru.job4j.todo.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "task")
@@ -14,7 +15,7 @@ public class Task {
     @Column(unique = true)
     private String name;
     private String description;
-    private String created;
+    private LocalDateTime created;
     private boolean done;
 
     public Task(String name, String description) {

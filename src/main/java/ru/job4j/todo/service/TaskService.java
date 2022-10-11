@@ -15,16 +15,20 @@ import java.util.Optional;
 public class TaskService {
     private final TaskStore store;
 
-    public Task create(Task task) {
-        return store.create(task);
+    public void create(Task task) {
+        store.create(task);
     }
 
     public boolean update(Task task) {
         return store.update(task);
     }
 
-    public void delete(Task task) {
-        store.delete(task);
+    public boolean updateTaskState(int id) {
+        return store.updateTaskState(id);
+    }
+
+    public void delete(int id) {
+        store.delete(id);
     }
 
     public Optional<Task> findByName(String name) {
@@ -34,6 +38,7 @@ public class TaskService {
     public Optional<Task> findById(int id) {
         return store.findById(id);
     }
+
     public List<Task> findAllOrderByCreated() {
         return store.findAllOrderByCreated();
     }
