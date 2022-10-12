@@ -17,129 +17,129 @@ public class TaskStore {
     private final SessionFactory sf;
 
     public void create(Task task) {
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            session.save(task);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                session.save(task);
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
     }
 
     public boolean update(Task task) {
-        Session session = sf.openSession();
         boolean result = false;
-        try {
-            session.beginTransaction();
-            session.update(task);
-            session.getTransaction().commit();
-            result = true;
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                session.update(task);
+                session.getTransaction().commit();
+                result = true;
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
         return result;
     }
 
     public boolean updateTaskState(int id) {
-        Session session = sf.openSession();
         boolean result = false;
-        try {
-            session.beginTransaction();
-            session.createQuery(
-                            "UPDATE Task SET done = :fdone WHERE id = :fId")
-                    .setParameter("fdone", true)
-                    .setParameter("fId", id)
-                    .executeUpdate();
-            session.getTransaction().commit();
-            result = true;
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                session.createQuery(
+                                "UPDATE Task SET done = :fdone WHERE id = :fId")
+                        .setParameter("fdone", true)
+                        .setParameter("fId", id)
+                        .executeUpdate();
+                session.getTransaction().commit();
+                result = true;
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
         return result;
     }
 
     public void delete(int id) {
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            session.createQuery(
-                            "DELETE Task WHERE id = :fId")
-                    .setParameter("fId", id)
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                session.createQuery(
+                                "DELETE Task WHERE id = :fId")
+                        .setParameter("fId", id)
+                        .executeUpdate();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
     }
 
     public Optional<Task> findByName(String name) {
-        Session session = sf.openSession();
         Optional<Task> result = Optional.empty();
-        try {
-            session.beginTransaction();
-            Query query = session.createQuery(
-                    "from Task t where t.name = :fname");
-            query.setParameter("fname", name);
-            result = query.uniqueResultOptional();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                Query query = session.createQuery(
+                        "from Task t where t.name = :fname");
+                query.setParameter("fname", name);
+                result = query.uniqueResultOptional();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
         return result;
     }
 
     public Optional<Task> findById(int id) {
-        Session session = sf.openSession();
         Optional<Task> result = Optional.empty();
-        try {
-            session.beginTransaction();
-            Query query = session.createQuery(
-                    "from Task t where t.id = :fid");
-            query.setParameter("fid", id);
-            result = query.uniqueResultOptional();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                Query query = session.createQuery(
+                        "from Task t where t.id = :fid");
+                query.setParameter("fid", id);
+                result = query.uniqueResultOptional();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
         return result;
     }
 
     public List<Task> findAllOrderByCreated() {
-        Session session = sf.openSession();
         List<Task> result = new ArrayList<>();
-        try {
-            session.beginTransaction();
-            result = session.createQuery(
-                    "FROM Task t ORDER BY t.created DESC").list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                result = session.createQuery(
+                        "FROM Task t ORDER BY t.created DESC").list();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
         return result;
     }
 
     public List<Task> findTasksByDone(boolean key) {
-        Session session = sf.openSession();
         List<Task> result = new ArrayList<>();
-        try {
-            session.beginTransaction();
-            Query query = session.createQuery(
-                    "from Task t where t.done = :fkey ORDER BY t.created DESC");
-            query.setParameter("fkey", key);
-            result = query.list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                Query query = session.createQuery(
+                        "from Task t where t.done = :fkey ORDER BY t.created DESC");
+                query.setParameter("fkey", key);
+                result = query.list();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
         }
-        session.close();
         return result;
     }
 }
