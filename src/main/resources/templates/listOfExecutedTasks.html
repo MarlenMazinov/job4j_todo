@@ -31,7 +31,8 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" th:href="@{/index}">Список всех задач</a>
-                <a class="nav-item nav-link active" href="#">Выполненные задачи <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link active" href="#">Выполненные задачи <span
+                        class="sr-only">(current)</span></a>
                 <a class="nav-item nav-link" th:href="@{/unexecutedTasks}">Новые задачи</a>
                 <a class="nav-item nav-link" th:href="@{/formAddTask}">Добавить задачу</a>
                 <a class="nav-item nav-link" th:href="@{/logout}">Выйти из системы</a>
@@ -43,6 +44,7 @@
             <thead>
             <tr>
                 <th scope="col">Название</th>
+                <th scope="col">Пользователь</th>
                 <th scope="col">Дата создания</th>
                 <th scope="col">Статус</th>
             </tr>
@@ -51,6 +53,7 @@
             <tr th:each="task: ${exTasks}">
                 <td><a class="nav-item nav-link" th:href="@{|/taskDescription/${task.id}|}"><span
                         th:text="${task.name}"></span></a>
+                <td th:text="${task.user.name}"></td>
                 </td>
                 <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
                 <td>Выполнено</td>

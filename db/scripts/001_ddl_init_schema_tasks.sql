@@ -1,8 +1,8 @@
-CREATE TABLE if not exists task
+create table if not exists task
 (
-    id          SERIAL PRIMARY KEY,
-    name        TEXT UNIQUE,
-    description TEXT,
-    created     TIMESTAMP,
-    done        BOOLEAN
-);
+    id serial primary key,
+    name text unique,
+    description text,
+    created timestamp,
+    done boolean
+)

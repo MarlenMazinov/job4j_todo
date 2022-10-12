@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
@@ -67,6 +68,7 @@ public class TaskController {
     public String createTask(Model model, @ModelAttribute Task task, HttpSession session) {
 
         task.setCreated(LocalDateTime.now());
+        task.setUser((User) session.getAttribute("user"));
         service.create(task);
         return "redirect:/index";
     }
