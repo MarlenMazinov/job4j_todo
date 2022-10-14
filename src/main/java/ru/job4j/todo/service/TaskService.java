@@ -26,6 +26,9 @@ public class TaskService {
     public boolean updateTaskState(int id) {
         return store.updateTaskState(id);
     }
+    public boolean updateTaskPriority(String importance) {
+        return store.updateTaskPriority(importance);
+    }
 
     public void delete(int id) {
         store.delete(id);

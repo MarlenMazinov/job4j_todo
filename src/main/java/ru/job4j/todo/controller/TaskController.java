@@ -70,6 +70,7 @@ public class TaskController {
         task.setCreated(LocalDateTime.now());
         task.setUser((User) session.getAttribute("user"));
         service.create(task);
+        service.updateTaskPriority("urgently");
         return "redirect:/index";
     }
 

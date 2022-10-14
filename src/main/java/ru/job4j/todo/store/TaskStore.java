@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 
 import java.util.ArrayList;
@@ -49,9 +50,32 @@ public class TaskStore {
             try {
                 session.beginTransaction();
                 session.createQuery(
-                                "UPDATE Task SET done = :fdone WHERE id = :fId")
+                                "update Task set done = :fdone where id = :fId")
                         .setParameter("fdone", true)
                         .setParameter("fId", id)
+                        .executeUpdate();
+                session.getTransaction().commit();
+                result = true;
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
+        }
+        return result;
+    }
+
+    public boolean updateTaskPriority(String importance) {
+        boolean result = false;
+        try (Session session = sf.openSession()) {
+            try {
+                Priority priority;
+                session.beginTransaction();
+                Query query = session.createQuery(
+                        "from Priority p where name = :fname").setParameter("fname", importance).
+                        setMaxResults(1);
+                priority = (Priority) query.uniqueResultOptional().get();
+                session.createQuery(
+                                "update Task set priority = :fpriority")
+                        .setParameter("fpriority", priority)
                         .executeUpdate();
                 session.getTransaction().commit();
                 result = true;
@@ -67,7 +91,7 @@ public class TaskStore {
             try {
                 session.beginTransaction();
                 session.createQuery(
-                                "DELETE Task WHERE id = :fId")
+                                "delete Task where id = :fId")
                         .setParameter("fId", id)
                         .executeUpdate();
                 session.getTransaction().commit();
@@ -83,7 +107,7 @@ public class TaskStore {
             try {
                 session.beginTransaction();
                 Query query = session.createQuery(
-                        "from Task t where t.name = :fname");
+                        "from Task t join fetch t.priority where t.name = :fname", Task.class);
                 query.setParameter("fname", name);
                 result = query.uniqueResultOptional();
                 session.getTransaction().commit();
@@ -100,7 +124,7 @@ public class TaskStore {
             try {
                 session.beginTransaction();
                 Query query = session.createQuery(
-                        "from Task t where t.id = :fid");
+                        "from Task t join fetch t.priority where t.id = :fid", Task.class);
                 query.setParameter("fid", id);
                 result = query.uniqueResultOptional();
                 session.getTransaction().commit();
@@ -117,8 +141,9 @@ public class TaskStore {
             try {
                 session.beginTransaction();
                 result = session.createQuery(
-                        "FROM Task t ORDER BY t.created DESC").list();
+                        "from Task t join fetch t.priority", Task.class).list();
                 session.getTransaction().commit();
+                System.out.println("find all");
             } catch (Exception e) {
                 session.getTransaction().rollback();
             }
@@ -132,7 +157,8 @@ public class TaskStore {
             try {
                 session.beginTransaction();
                 Query query = session.createQuery(
-                        "from Task t where t.done = :fkey ORDER BY t.created DESC");
+                        "from Task t join fetch t.priority where t.done = :fkey "
+                                + "order by t.created desc", Task.class);
                 query.setParameter("fkey", key);
                 result = query.list();
                 session.getTransaction().commit();
