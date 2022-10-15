@@ -5,12 +5,15 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
@@ -40,7 +43,8 @@ public class TaskController {
 
     @GetMapping("/formAddTask")
     public String addTask(Model model, HttpSession session) {
-        model.addAttribute("newTask", new Task());
+        model.addAttribute("task", new Task());
+        model.addAttribute("allCategoriesList", service.findAllCategories());
         return "addTask";
     }
 
@@ -65,10 +69,15 @@ public class TaskController {
     }
 
     @PostMapping("/createTask")
-    public String createTask(Model model, @ModelAttribute Task task, HttpSession session) {
-
+    public String createTask(@RequestParam(value = "category.id",
+            required = false) List<Integer> findCategories, @ModelAttribute Task task, HttpSession session) {
+        List<Category> list = new ArrayList<>();
+        for (Integer id : findCategories) {
+            list.add(service.findCategoryById(id));
+        }
         task.setCreated(LocalDateTime.now());
         task.setUser((User) session.getAttribute("user"));
+        task.setCategories(list);
         service.create(task);
         service.updateTaskPriority("urgently");
         return "redirect:/index";

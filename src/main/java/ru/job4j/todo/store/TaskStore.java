@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 
@@ -141,9 +142,9 @@ public class TaskStore {
             try {
                 session.beginTransaction();
                 result = session.createQuery(
-                        "from Task t join fetch t.priority", Task.class).list();
+                        "from Task t join fetch t.priority order by t.created desc",
+                        Task.class).list();
                 session.getTransaction().commit();
-                System.out.println("find all");
             } catch (Exception e) {
                 session.getTransaction().rollback();
             }
@@ -161,6 +162,34 @@ public class TaskStore {
                                 + "order by t.created desc", Task.class);
                 query.setParameter("fkey", key);
                 result = query.list();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
+        }
+        return result;
+    }
+
+    public List<Category> findAllCategories() {
+        List<Category> result = new ArrayList<>();
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                result = session.createQuery("from Category").list();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            }
+        }
+        return result;
+    }
+
+    public Category findCategoryById(int id) {
+        Category result = null;
+        try (Session session = sf.openSession()) {
+            try {
+                session.beginTransaction();
+                result = session.get(Category.class, id);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();

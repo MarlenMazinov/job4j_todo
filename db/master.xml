@@ -11,4 +11,7 @@
     <include file="scripts/004_ddl_init_schema_priorities.sql" relativeToChangelogFile="true"/>
     <include file="scripts/005_dml_insert_schema_priorities.sql" relativeToChangelogFile="true"/>
     <include file="scripts/006_ddl_alter_schema_tasks.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/007_ddl_init_schema_categories.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/008_ddl_init_schema_taskCategories.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/009_dml_insert_schema_categories.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

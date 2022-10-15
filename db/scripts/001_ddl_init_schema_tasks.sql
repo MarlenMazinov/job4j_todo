@@ -1,4 +1,4 @@
-create table if not exists task
+create table if not exists tasks
 (
     id serial primary key,
     name text unique,

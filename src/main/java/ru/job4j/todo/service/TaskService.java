@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.TaskStore;
 
@@ -26,6 +27,7 @@ public class TaskService {
     public boolean updateTaskState(int id) {
         return store.updateTaskState(id);
     }
+
     public boolean updateTaskPriority(String importance) {
         return store.updateTaskPriority(importance);
     }
@@ -48,5 +50,13 @@ public class TaskService {
 
     public List<Task> findTasksByDone(boolean key) {
         return store.findTasksByDone(key);
+    }
+
+    public List<Category> findAllCategories() {
+        return store.findAllCategories();
+    }
+
+    public Category findCategoryById(int id) {
+        return store.findCategoryById(id);
     }
 }

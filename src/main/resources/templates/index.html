@@ -43,6 +43,7 @@
             <thead>
             <tr>
                 <th scope="col">Название</th>
+                <th scope="col">Категории</th>
                 <th scope="col">Пользователь</th>
                 <th scope="col">Дата создания</th>
                 <th scope="col">Приоритет</th>
@@ -53,6 +54,11 @@
             <tr th:each="task: ${tasks}">
                 <td><a class="nav-item nav-link" th:href="@{|/taskDescription/${task.id}|}"><span
                         th:text="${task.name}"></span></a>
+                </td>
+                <td>
+                    <div th:each="c: ${task.getCategories()}">
+                        <p th:text="${c.name}"></p>
+                    </div>
                 </td>
                 <td th:text="${task.user.name}"></td>
                 <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>

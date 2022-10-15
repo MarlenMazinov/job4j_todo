@@ -43,13 +43,20 @@
                 Создание новой задачи
             </div>
             <div class="card-body">
-                <form th:action="@{/createTask}" method="POST">
-                    <input type="hidden" name="id" value="0"/>
+                <form th:action="@{/createTask}" method="POST" th:object="${task}">
+                    <input type="hidden" name="id" th:field="${task.id}"/>
                     <div class="form-group">
                         <label for="name">Название</label>
-                        <input type="text" class="form-control" name="name" id="name">
+                        <input type="text" class="form-control" name="name" id="name" th:field="${task.name}">
+                        <label for="category.id">Категории</label>
+                        <select class="form-control" id="category.id" name="category.id"
+                                multiple="multiple">
+                            <option th:each="category : ${allCategoriesList}" th:value="${category.id}"
+                                    th:text="${category.name}"></option>
+                        </select>
                         <label for="name">Описание</label>
-                        <input type="text" class="form-control" name="description" id="description">
+                        <input type="text" class="form-control" name="description" id="description"
+                               th:field="${task.description}">
                     </div>
                     <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
                 </form>
