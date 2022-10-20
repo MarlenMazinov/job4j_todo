@@ -92,6 +92,9 @@ public class TaskController {
 
     @PostMapping("/updateTask")
     public String updateTask(Model model, @ModelAttribute Task task, HttpSession session) {
+        task.setUser(service.findById(task.getId()).get().getUser());
+        task.setPriority(service.findById(task.getId()).get().getPriority());
+        task.setCategories(service.findById(task.getId()).get().getCategories());
         service.update(task);
         return taskDescr(model, task.getId(), session);
     }

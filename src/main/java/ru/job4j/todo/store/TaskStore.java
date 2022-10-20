@@ -35,6 +35,13 @@ public class TaskStore {
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
+                session.createQuery(
+                                "update Task set name = :fname, description = :fdescription"
+                                        + " where id = :fId")
+                        .setParameter("fname", task.getName())
+                        .setParameter("fdescription", task.getDescription())
+                        .setParameter("fId", task.getId())
+                        .executeUpdate();
                 session.update(task);
                 session.getTransaction().commit();
                 result = true;
@@ -71,7 +78,7 @@ public class TaskStore {
                 Priority priority;
                 session.beginTransaction();
                 Query query = session.createQuery(
-                        "from Priority p where name = :fname").setParameter("fname", importance).
+                                "from Priority p where name = :fname").setParameter("fname", importance).
                         setMaxResults(1);
                 priority = (Priority) query.uniqueResultOptional().get();
                 session.createQuery(
@@ -107,9 +114,13 @@ public class TaskStore {
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
+                List<Task> list = session.createQuery("from Task t join fetch t.categories",
+                        Task.class).getResultList();
                 Query query = session.createQuery(
-                        "from Task t join fetch t.priority where t.name = :fname", Task.class);
+                        "from Task t join fetch t.priority where t.name = :fname and t in :flist",
+                        Task.class);
                 query.setParameter("fname", name);
+                query.setParameter("flist", list);
                 result = query.uniqueResultOptional();
                 session.getTransaction().commit();
             } catch (Exception e) {
@@ -124,9 +135,13 @@ public class TaskStore {
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
+                List<Task> list = session.createQuery("from Task t join fetch t.categories",
+                        Task.class).getResultList();
                 Query query = session.createQuery(
-                        "from Task t join fetch t.priority where t.id = :fid", Task.class);
+                        "from Task t join fetch t.priority where t.id = :fid and t in :flist",
+                        Task.class);
                 query.setParameter("fid", id);
+                query.setParameter("flist", list);
                 result = query.uniqueResultOptional();
                 session.getTransaction().commit();
             } catch (Exception e) {
@@ -141,9 +156,12 @@ public class TaskStore {
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
+                List<Task> list = session.createQuery("from Task t join fetch t.categories",
+                        Task.class).getResultList();
                 result = session.createQuery(
-                        "from Task t join fetch t.priority order by t.created desc",
-                        Task.class).list();
+                                "from Task t join fetch t.priority where t in :flist "
+                                        + "order by t.created desc", Task.class)
+                        .setParameter("flist", list).getResultList();
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
@@ -157,11 +175,14 @@ public class TaskStore {
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
+                List<Task> list = session.createQuery("from Task t join fetch t.categories",
+                        Task.class).getResultList();
                 Query query = session.createQuery(
-                        "from Task t join fetch t.priority where t.done = :fkey "
+                        "from Task t join fetch t.priority where t.done = :fkey and t in :flist "
                                 + "order by t.created desc", Task.class);
                 query.setParameter("fkey", key);
-                result = query.list();
+                query.setParameter("flist", list);
+                result = query.getResultList();
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();

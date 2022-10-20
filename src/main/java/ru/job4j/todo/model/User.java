@@ -1,13 +1,14 @@
 package ru.job4j.todo.model;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "users")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,18 +19,7 @@ public class User {
     private String login;
     private String password;
 
-    public User() {
-
-    }
-
     public User(String name, String login, String password) {
-        this.name = name;
-        this.login = login;
-        this.password = password;
-    }
-
-    public User(int id, String name, String login, String password) {
-        this.id = id;
         this.name = name;
         this.login = login;
         this.password = password;
