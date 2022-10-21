@@ -9,6 +9,7 @@ import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +19,17 @@ import java.util.Optional;
 public class TaskStore {
     private final SessionFactory sf;
 
-    public void create(Task task) {
+    public void create(Task task, List<Integer> categoryId, int priorityId) {
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
+                List<Category> categoryList = new ArrayList<>();
+                        categoryId.forEach(id -> categoryList.
+                                add(session.get(Category.class, id)));
+                Priority priority = session.get(Priority.class, priorityId);
+                task.setCreated(LocalDateTime.now());
+                task.setCategories(categoryList);
+                task.setPriority(priority);
                 session.save(task);
                 session.getTransaction().commit();
             } catch (Exception e) {
@@ -30,11 +38,17 @@ public class TaskStore {
         }
     }
 
-    public boolean update(Task task) {
+    public boolean update(Task task, List<Integer> categoryId, int priorityId) {
         boolean result = false;
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
+                List<Category> categoryList = new ArrayList<>();
+                categoryId.forEach(id -> categoryList.
+                        add(session.get(Category.class, id)));
+                Priority priority = session.get(Priority.class, priorityId);
+                task.setCategories(categoryList);
+                task.setPriority(priority);
                 session.createQuery(
                                 "update Task set name = :fname, description = :fdescription"
                                         + " where id = :fId")
@@ -107,27 +121,6 @@ public class TaskStore {
                 session.getTransaction().rollback();
             }
         }
-    }
-
-    public Optional<Task> findByName(String name) {
-        Optional<Task> result = Optional.empty();
-        try (Session session = sf.openSession()) {
-            try {
-                session.beginTransaction();
-                List<Task> list = session.createQuery("from Task t join fetch t.categories",
-                        Task.class).getResultList();
-                Query query = session.createQuery(
-                        "from Task t join fetch t.priority where t.name = :fname and t in :flist",
-                        Task.class);
-                query.setParameter("fname", name);
-                query.setParameter("flist", list);
-                result = query.uniqueResultOptional();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-            }
-        }
-        return result;
     }
 
     public Optional<Task> findById(int id) {
@@ -205,12 +198,12 @@ public class TaskStore {
         return result;
     }
 
-    public Category findCategoryById(int id) {
-        Category result = null;
+    public List<Priority> findAllPriorities() {
+        List<Priority> result = new ArrayList<>();
         try (Session session = sf.openSession()) {
             try {
                 session.beginTransaction();
-                result = session.get(Category.class, id);
+                result = session.createQuery("from Priority").list();
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();

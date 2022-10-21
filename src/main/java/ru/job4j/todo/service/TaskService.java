@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Category;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.TaskStore;
 
@@ -16,12 +17,12 @@ import java.util.Optional;
 public class TaskService {
     private final TaskStore store;
 
-    public void create(Task task) {
-        store.create(task);
+    public void create(Task task, List<Integer> categoryId, int priorityId) {
+        store.create(task, categoryId, priorityId);
     }
 
-    public boolean update(Task task) {
-        return store.update(task);
+    public boolean update(Task task, List<Integer> categoryId, int priorityId) {
+        return store.update(task, categoryId, priorityId);
     }
 
     public boolean updateTaskState(int id) {
@@ -34,10 +35,6 @@ public class TaskService {
 
     public void delete(int id) {
         store.delete(id);
-    }
-
-    public Optional<Task> findByName(String name) {
-        return store.findByName(name);
     }
 
     public Optional<Task> findById(int id) {
@@ -56,7 +53,5 @@ public class TaskService {
         return store.findAllCategories();
     }
 
-    public Category findCategoryById(int id) {
-        return store.findCategoryById(id);
-    }
+    public List<Priority> findAllPriorities() { return store.findAllPriorities(); }
 }

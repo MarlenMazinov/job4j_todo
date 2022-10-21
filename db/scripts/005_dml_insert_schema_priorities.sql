@@ -1,3 +1,3 @@
-insert into priorities (name, position) values ('urgently', 1);
-insert into priorities (name, position) values ('normal', 2);
-insert into priorities (name, position) values ('urgently', 3);
+insert into priorities (name, position) values ('Высокий', 1);
+insert into priorities (name, position) values ('Средний', 2);
+insert into priorities (name, position) values ('Низкий', 3);

@@ -48,15 +48,20 @@
                     <div class="form-group">
                         <label for="name">Название</label>
                         <input type="text" class="form-control" name="name" id="name" th:field="${task.name}">
+                        <label for="name">Описание</label>
+                        <input type="text" class="form-control" name="description" id="description"
+                               th:field="${task.description}">
                         <label for="category.id">Категории</label>
                         <select class="form-control" id="category.id" name="category.id"
                                 multiple="multiple">
                             <option th:each="category : ${allCategoriesList}" th:value="${category.id}"
                                     th:text="${category.name}"></option>
                         </select>
-                        <label for="name">Описание</label>
-                        <input type="text" class="form-control" name="description" id="description"
-                               th:field="${task.description}">
+                        <label for="priority.id">Приоритет</label>
+                        <select class="form-control" id="priority.id" name="priority.id">
+                            <option th:each="priority : ${allPrioritiesList}" th:value="${priority.id}"
+                                    th:text="${priority.name}"></option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
                 </form>

@@ -29,7 +29,7 @@ public class Task {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "priority_id")
+    @JoinColumn(name = "priority")
     private Priority priority;
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(

@@ -1,2 +1,2 @@
-alter table tasks add column priority_id int
+alter table tasks add column priority int
     references priorities(id);
