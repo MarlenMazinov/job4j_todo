@@ -26,10 +26,12 @@ public class TaskService {
     }
 
     public boolean updateTaskState(int id) {
+
         return store.updateTaskState(id);
     }
 
     public boolean updateTaskPriority(String importance) {
+
         return store.updateTaskPriority(importance);
     }
 
@@ -38,20 +40,26 @@ public class TaskService {
     }
 
     public Optional<Task> findById(int id) {
+
         return store.findById(id);
     }
 
     public List<Task> findAllOrderByCreated() {
+
         return store.findAllOrderByCreated();
     }
 
     public List<Task> findTasksByDone(boolean key) {
+
         return store.findTasksByDone(key);
     }
 
     public List<Category> findAllCategories() {
+
         return store.findAllCategories();
     }
 
-    public List<Priority> findAllPriorities() { return store.findAllPriorities(); }
+    public List<Priority> findAllPriorities() {
+        return store.findAllPriorities();
+    }
 }

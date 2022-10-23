@@ -15,22 +15,11 @@ public class UserService {
     private final UserStore store;
 
     public User create(User user) {
+
         return store.create(user);
-    }
-
-    public boolean update(User user) {
-        return store.update(user);
-    }
-
-    public void delete(User user) {
-        store.delete(user);
     }
 
     public Optional<User> findByLoginAndPwd(String login, String password) {
         return store.findByLoginAndPwd(login, password);
-    }
-
-    public Optional<User> findById(int id) {
-        return store.findById(id);
     }
 }

@@ -29,50 +29,6 @@ public class UserStore {
         return user;
     }
 
-    public boolean update(User user) {
-        boolean result = false;
-        try (Session session = sf.openSession()) {
-            try {
-                session.beginTransaction();
-                session.update(user);
-                session.getTransaction().commit();
-                result = true;
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-            }
-        }
-        return result;
-    }
-
-    public void delete(User user) {
-        try (Session session = sf.openSession()) {
-            try {
-                session.beginTransaction();
-                session.delete(user);
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-            }
-        }
-    }
-
-    public Optional<User> findById(int id) {
-        Optional<User> result = Optional.empty();
-        try (Session session = sf.openSession()) {
-            try {
-                session.beginTransaction();
-                Query query = session.createQuery(
-                        "from User u where u.id = :fid");
-                query.setParameter("fid", id);
-                result = query.uniqueResultOptional();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-            }
-        }
-        return result;
-    }
-
     public Optional<User> findByLoginAndPwd(String login, String password) {
         Optional<User> result = Optional.empty();
         try (Session session = sf.openSession()) {

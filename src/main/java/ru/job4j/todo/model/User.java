@@ -1,4 +1,5 @@
 package ru.job4j.todo.model;
+
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,10 +19,6 @@ public class User {
     @Column(unique = true)
     private String login;
     private String password;
-
-    public User(String name, String login, String password) {
-        this.name = name;
-        this.login = login;
-        this.password = password;
-    }
+    @Column(name = "zone_id")
+    private String zoneId;
 }

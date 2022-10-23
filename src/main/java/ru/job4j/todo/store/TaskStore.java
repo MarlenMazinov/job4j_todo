@@ -9,7 +9,8 @@ import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +28,9 @@ public class TaskStore {
                         categoryId.forEach(id -> categoryList.
                                 add(session.get(Category.class, id)));
                 Priority priority = session.get(Priority.class, priorityId);
-                task.setCreated(LocalDateTime.now());
                 task.setCategories(categoryList);
                 task.setPriority(priority);
+                task.setCreated(ZonedDateTime.now());
                 session.save(task);
                 session.getTransaction().commit();
             } catch (Exception e) {
@@ -49,13 +50,6 @@ public class TaskStore {
                 Priority priority = session.get(Priority.class, priorityId);
                 task.setCategories(categoryList);
                 task.setPriority(priority);
-                session.createQuery(
-                                "update Task set name = :fname, description = :fdescription"
-                                        + " where id = :fId")
-                        .setParameter("fname", task.getName())
-                        .setParameter("fdescription", task.getDescription())
-                        .setParameter("fId", task.getId())
-                        .executeUpdate();
                 session.update(task);
                 session.getTransaction().commit();
                 result = true;
@@ -135,7 +129,10 @@ public class TaskStore {
                         Task.class);
                 query.setParameter("fid", id);
                 query.setParameter("flist", list);
-                result = query.uniqueResultOptional();
+                Task task = (Task) query.uniqueResult();
+                task.setCreated(task.getCreated().withZoneSameInstant(
+                        ZoneId.of(task.getUser().getZoneId())));
+                result = Optional.ofNullable(task);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
@@ -160,6 +157,8 @@ public class TaskStore {
                 session.getTransaction().rollback();
             }
         }
+        result.forEach(task -> task.setCreated(task.getCreated().withZoneSameInstant(
+                ZoneId.of(task.getUser().getZoneId()))));
         return result;
     }
 
@@ -177,6 +176,8 @@ public class TaskStore {
                 query.setParameter("flist", list);
                 result = query.getResultList();
                 session.getTransaction().commit();
+                result.forEach(task -> task.setCreated(task.getCreated().withZoneSameInstant(
+                        ZoneId.of(task.getUser().getZoneId()))));
             } catch (Exception e) {
                 session.getTransaction().rollback();
             }
